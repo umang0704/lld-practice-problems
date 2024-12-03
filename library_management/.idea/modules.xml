@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/library_management.iml" filepath="$PROJECT_DIR$/.idea/library_management.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lld_basic_impl.iml" filepath="$PROJECT_DIR$/lld_basic_impl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lld_basic_impl.main.iml" filepath="$PROJECT_DIR$/.idea/modules/lld_basic_impl.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lld_basic_impl.test.iml" filepath="$PROJECT_DIR$/.idea/modules/lld_basic_impl.test.iml" />
+    </modules>
+  </component>
+</project>

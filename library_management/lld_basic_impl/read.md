@@ -12,4 +12,30 @@ This is a basic implementation of a Library Management System backend using Spri
 3. **Borrowing and Returning**
     - Track the borrowing and returning of books.
 4. **Search Functionality**
-    - Search books by title, author, or genre.
+    - Search books by title, author.
+---
+# Solution
+
+## User Journey
+- Here user of the application will be a Library Admin.
+
+## Class Diagram
+```devicespec
+Library
+    - id : String
+    - books : <List<Book>>
+    - users : List<User>
+    + addBook(details)
+    + updateBook(id,details)
+    + deleteBook(id)
+Book
+    - id : String
+    - name : String
+    - author : String
+    - pages : Long
+    - status 
+User
+    - id : String
+    - name : String
+    - books : List<Book>
+```
