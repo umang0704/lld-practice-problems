@@ -34,7 +34,7 @@ public class LibraryDao {
         return true;
     }
 
-    public synchronized String getBookId(String ){
+    public synchronized String getBookId(String id){
         return null;
     }
 }
