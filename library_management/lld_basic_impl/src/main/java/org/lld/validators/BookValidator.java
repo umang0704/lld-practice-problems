@@ -1,46 +1,48 @@
 package org.lld.validators;
 
-import org.lld.entities.Book;
-import org.lld.repo.Library;
+import org.lld.exceptions.LibraryException;
+import org.lld.repo.LibraryRepo;
 
-import java.util.Map;
+import java.text.MessageFormat;
+
+import static java.text.MessageFormat.format;
 
 public class BookValidator {
-    /**
-     * Check if book exists
-     * @param library
-     * @param name
-     * @param author
-     * @return
-     */
-    public boolean checkIfBookExists(Library library, String name, String author) {
-        Map<String, Book> books = library.getBooks();
-        return books.entrySet()
-                .stream()
-                .anyMatch(entry -> bookWithNameAndAuthor(entry.getValue(), name, author));
-    }
 
     /**
-     *  Checks is books properties valid
-     * @param name
+     * Validate new book details
+     *
+     * @param title
      * @param author
-     * @param pages
-     * @return
+     * @param count
+     * @return true/false
      */
-    public boolean isBookPropertiesValid(String name, String author, int pages){
-        return !name.isBlank()
-                && !author.isBlank()
-                && pages != 0;
+    public boolean isBookDetailsValid(String title, String author, int count) {
+        if (count < 0) {
+            throw new LibraryException(format("INVALID_BOOK_COUNT:{0}", count));
+        }
+
+        if (title.isBlank()) {
+            throw new LibraryException(format("INVALID_BOOK_TITLE:{0}", count));
+        }
+
+        if (author.isBlank()) {
+            throw new LibraryException(format("INVALID_BOOK_TITLE:{0}", count));
+        }
+
+        return true;
     }
 
-    /**
-     * Match book name and author
-     * @param existing
-     * @param name
-     * @param author
-     * @return
-     */
-    private boolean bookWithNameAndAuthor(Book existing, String name, String author) {
-        return existing.getName().equalsIgnoreCase(name) && existing.getAuthor().equalsIgnoreCase(author);
+    public void idempotencyCheck(LibraryRepo libraryRepo, String title) {
+        boolean bookWithTitleExists = libraryRepo
+                .getTitleToBookMapping()
+                .containsKey(title);
+        if (bookWithTitleExists) {
+            String bookId = libraryRepo
+                    .getTitleToBookMapping()
+                    .get(title);
+            throw new LibraryException(
+                    format("BOOK_TITLE_EXISTS:BOOK_ID:{0}", bookId));
+        }
     }
 }

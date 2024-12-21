@@ -1,64 +1,89 @@
 package org.lld.service;
 
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.lld.BookMapper;
-import org.lld.dao.LibraryDao;
 import org.lld.entities.Book;
-import org.lld.entities.BookMetric;
-import org.lld.repo.Library;
-import org.lld.validators.BookValidator;
+import org.lld.entities.User;
+import org.lld.exceptions.LibraryException;
+import org.lld.repo.LibraryRepo;
+
+import java.text.MessageFormat;
+import java.util.Objects;
 
 @Slf4j
-@NoArgsConstructor
 public class LibraryService {
-    private BookValidator bookValidator;
-    private BookMapper bookMapper;
-    private LibraryDao libraryDao;
+    private static LibraryService libraryService;
 
-    /**
-     * Add Book with validation,
-     * @param library
-     * @param name
-     * @param author
-     * @param pages
-     * @param quantity
-     * @return bookId
-     */
-    public String addBook(Library library, String name, String author, int pages,int quantity) {
+    private LibraryRepo libraryRepo;
+    private UserService userService;
+    private BookService bookService;
 
-        boolean bookPropertiesValid = bookValidator.isBookPropertiesValid(name, author, pages);
-        if (!bookPropertiesValid) {
-            log.error("Book property not valid");
-            return null;
-        }
-
-        boolean bookExists = bookValidator.checkIfBookExists(library, name, author);
-        if (bookExists) {
-            log.error("Book Already Exists.");
-            return null;
-        }
-
-        Book book = bookMapper.createBook(name, author, pages);
-        String bookId = libraryDao.addBook(library, book);
-
-        BookMetric bookMetric = bookMapper.createBookMetric(bookId, quantity);
-        libraryDao.addBookMetric(library,bookMetric);
-
-        return bookId;
+    private LibraryService() {
     }
 
-    public boolean updateBookDetails(Library library, String name, String author, int page, int quantity){
-        // validate properties
-        boolean bookPropertiesValid = bookValidator.isBookPropertiesValid(name, author, page);
-        if(!bookPropertiesValid){
-            log.info("Invalid Book Properties");
-            return false;
+    public static synchronized LibraryService getInstance() {
+        if (Objects.isNull(libraryService)) {
+            libraryService = new LibraryService();
         }
-        // check if book exists
-//        libraryDao.addBookMetric()
-        // check update conditions
-        // update details
-        return false;
+        return libraryService;
+    }
+
+    /**
+     * Gets Library
+     *
+     * @return
+     */
+    public void initiateLibrary() {
+        this.libraryRepo = new LibraryRepo();
+        this.userService = new UserService();
+        this.bookService = new BookService();
+    }
+
+    /**
+     * Create User
+     * @param name
+     * @param contact
+     * @return userId
+     */
+    public String createUser(String name, String contact) {
+        try {
+            User user = userService.createUser(libraryRepo, name, contact);
+            System.out.println(MessageFormat.format("USER_CREATION_SUCCESS:{0}", user.getId()));
+            return user.getId();
+        } catch (LibraryException e) {
+            String error = MessageFormat.format("ERROR_CREATING_USER:{0}", e.getMessage());
+            System.out.println(error);
+            return null;
+        }
+    }
+
+    /**
+     * Create Book
+     * @param title
+     * @param author
+     * @param count
+     * @return bookId
+     */
+    public String createBook(String title, String author, int count){
+        try {
+            Book book = bookService.createBook(libraryRepo, title, author, count);
+            System.out.println(MessageFormat.format("BOOK_ADDED_SUCCESS:{0}",book.getId()));
+            return book.getId();
+        }catch (LibraryException e){
+            String error = MessageFormat.format("ERROR_CREATING_BOOK:{0}",e.getMessage());
+            System.out.println(error);
+            return null;
+        }
+    }
+
+    /**
+     * Borrow Book
+     * 1. Validate User
+     * 2. Validate Book
+     * 3. Borrow Book
+     * @param user1Id
+     * @param book1Id
+     */
+    public void borrowBook(String user1Id, String book1Id) {
+
     }
 }

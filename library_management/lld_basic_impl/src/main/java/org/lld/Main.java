@@ -1,7 +1,10 @@
 package org.lld;
 
+import org.lld.client.LibraryClient;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        LibraryClient libraryClient = new LibraryClient();
+        libraryClient.startLibrary();
     }
 }

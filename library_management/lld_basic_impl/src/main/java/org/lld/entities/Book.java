@@ -1,20 +1,48 @@
 package org.lld.entities;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import java.util.UUID;
 
-@Data
+
 public class Book {
     private String id = UUID.randomUUID().toString();
-    private String name;
+    private String title;
     private String author;
-    private int pages;
+    private int count;
 
-    public Book(String name, String author, int pages) {
-        this.name = name;
+    public Book(String title, String author, int count) {
+        this.id = id;
+        this.title = title;
         this.author = author;
-        this.pages = pages;
+        this.count = count;
+    }
+
+    public Book() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 }
