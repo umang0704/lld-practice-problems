@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module external.linked.project.id="lld_basic_impl:test" external.linked.project.path="$MODULE_DIR$/../../lld_basic_impl" external.root.project.path="$MODULE_DIR$/../../lld_basic_impl" external.system.id="GRADLE" external.system.module.group="org.lld" external.system.module.type="sourceSet" external.system.module.version="1.0-SNAPSHOT" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_X">
+  <component name="NewModuleRootManager">
     <output-test url="file://$MODULE_DIR$/../../lld_basic_impl/build/classes/java/test" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../lld_basic_impl/src/test" />
