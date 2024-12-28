@@ -1,16 +1,16 @@
 package org.lld;
 
+import lombok.extern.slf4j.Slf4j;
 import org.lld.client.SnakeAndLadderClient;
-import org.lld.utils.logger.Logger;
 
+@Slf4j
 public class Main {
-    private static Logger logger = Logger.getLogger();
 
     public static void main(String[] args) {
-        logger.info(INIT_GAME_LOG);
+        log.info(INIT_GAME_LOG);
         SnakeAndLadderClient gameClient = new SnakeAndLadderClient();
         gameClient.startGame();
-        logger.info(END_GAME_LOG);
+        log.info(END_GAME_LOG);
     }
 
 
