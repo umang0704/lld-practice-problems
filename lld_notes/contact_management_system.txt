@@ -1,0 +1,162 @@
+//Class Diagram
+/*
+Contact
+    - int id PK
+    - String firstName
+    - String lastName
+    - String phoneNumber 
+
+ContactService
+    + addContact(String firstName, String lastName, String phoneNumber)
+
+Search Service 
+    + List<Contact> findByFirstName(String key)
+    + List<Contact> findByLastName(String key)
+    + List<Contact> findByNumber(String key)
+
+DataRepository
+    - Map<String number, Contact contact> director
+    - TrieNode trie
+    + getTrie()
+    + getDirectory()
+
+TrieNode 
+    - Map<Character,TrieNode> node 
+    - Set<Contact> contacts
+*/
+import java.util.*;
+import java.util.stream.Collectors;
+
+class Contact {
+    private int id;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
+
+    public Contact(int id, String firstName, String lastName, String phoneNumber) {
+        this.id = id;
+        this.firstName = firstName.toLowerCase(); // Normalize for case-insensitive search
+        this.lastName = lastName.toLowerCase();
+        this.phoneNumber = phoneNumber;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "Contact{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                '}';
+    }
+}
+
+class TrieNode {
+    Map<Character, TrieNode> children = new HashMap<>();
+    Set<Contact> contacts = new HashSet<>();
+}
+
+class DataRepository {
+    private final TrieNode trie = new TrieNode();
+    private final Map<String, Contact> directory = new HashMap<>();
+
+    public TrieNode getTrie() {
+        return trie;
+    }
+
+    public Map<String, Contact> getDirectory() {
+        return directory;
+    }
+}
+
+class SearchService {
+    private final DataRepository repository;
+
+    public SearchService(DataRepository repository) {
+        this.repository = repository;
+    }
+
+    public List<Contact> findByFirstName(String key) {
+        return search(key.toLowerCase());
+    }
+
+    public List<Contact> findByLastName(String key) {
+        return search(key.toLowerCase());
+    }
+
+    public List<Contact> findByNumber(String key) {
+        return repository.getDirectory().values().stream()
+                .filter(c -> c.getPhoneNumber().contains(key))
+                .collect(Collectors.toList());
+    }
+
+    private List<Contact> search(String key) {
+        TrieNode node = repository.getTrie();
+        for (char c : key.toCharArray()) {
+            if (!node.children.containsKey(c)) return Collections.emptyList();
+            node = node.children.get(c);
+        }
+        return new ArrayList<>(node.contacts);
+    }
+}
+
+class ContactService {
+    private final DataRepository repository;
+    private int idCounter = 1;
+
+    public ContactService(DataRepository repository) {
+        this.repository = repository;
+    }
+
+    public void addContact(String firstName, String lastName, String phoneNumber) {
+        Contact contact = new Contact(idCounter++, firstName, lastName, phoneNumber);
+        repository.getDirectory().put(phoneNumber, contact);
+        insertIntoTrie(contact.getFirstName(), contact);
+        insertIntoTrie(contact.getLastName(), contact);
+    }
+
+    private void insertIntoTrie(String key, Contact contact) {
+        TrieNode node = repository.getTrie();
+        for (char c : key.toCharArray()) {
+            node = node.children.computeIfAbsent(c, k -> new TrieNode());
+        }
+        node.contacts.add(contact);
+    }
+}
+
+public class ContactManagerTest {
+    public static void main(String[] args) {
+        DataRepository repository = new DataRepository();
+        ContactService contactService = new ContactService(repository);
+        SearchService searchService = new SearchService(repository);
+
+        contactService.addContact("John", "Doe", "1234567890");
+        contactService.addContact("Jane", "Doe", "0987654321");
+        contactService.addContact("Jack", "Smith", "1112223333");
+
+        System.out.println("\nSearching by first name 'Ja':");
+        searchService.findByFirstName("Ja").forEach(System.out::println);
+
+        System.out.println("\nSearching by last name 'Doe':");
+        searchService.findByLastName("Doe").forEach(System.out::println);
+
+        System.out.println("\nSearching by phone number '123':");
+        searchService.findByNumber("123").forEach(System.out::println);
+    }
+}
